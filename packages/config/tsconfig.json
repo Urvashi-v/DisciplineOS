@@ -1,0 +1,11 @@
+{
+  "extends": "./typescript/base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["tailwind/**/*.ts", "tailwind/**/*.d.ts"]
+}

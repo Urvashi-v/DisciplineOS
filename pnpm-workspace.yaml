@@ -1,0 +1,10 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Central version catalog — keeps shared dependency versions aligned across
+# every workspace package. Reference with `"pkg": "catalog:"` in package.json.
+catalog:
+  typescript: ^5.7.3
+  '@types/node': ^20.17.12
+  zod: ^3.24.1
