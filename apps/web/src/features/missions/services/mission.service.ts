@@ -27,6 +27,12 @@ export const missionService = {
   list(filter?: Partial<MissionFilter>): Promise<Paginated<Mission>> {
     return http.get<Paginated<Mission>>(`missions${buildQuery(filter)}`);
   },
+  today(): Promise<Mission[]> {
+    return http.get<Mission[]>('missions/today');
+  },
+  upcoming(): Promise<Mission[]> {
+    return http.get<Mission[]>('missions/upcoming');
+  },
   get(id: string): Promise<Mission> {
     return http.get<Mission>(`missions/${id}`);
   },

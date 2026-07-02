@@ -11,3 +11,19 @@ export function useMissions(filter?: Partial<MissionFilter>) {
     queryFn: () => missionService.list(filter),
   });
 }
+
+/** Missions due or scheduled today (or currently active). */
+export function useTodaysMissions() {
+  return useQuery({
+    queryKey: missionKeys.today(),
+    queryFn: () => missionService.today(),
+  });
+}
+
+/** The next few upcoming missions by deadline. */
+export function useUpcomingMissions() {
+  return useQuery({
+    queryKey: missionKeys.upcoming(),
+    queryFn: () => missionService.upcoming(),
+  });
+}

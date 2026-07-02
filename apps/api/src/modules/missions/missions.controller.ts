@@ -44,6 +44,16 @@ export class MissionsController {
     return this.missions.findMany(userId, filter);
   }
 
+  @Get('today')
+  today(@CurrentUserId() userId: string) {
+    return this.missions.findToday(userId);
+  }
+
+  @Get('upcoming')
+  upcoming(@CurrentUserId() userId: string) {
+    return this.missions.findUpcoming(userId);
+  }
+
   @Get(':id')
   findOne(@CurrentUserId() userId: string, @Param('id') id: string) {
     return this.missions.findOne(userId, id);

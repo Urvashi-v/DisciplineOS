@@ -10,8 +10,16 @@ import {
 } from '@disciplineos/types';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { endOfToday, startOfToday } from '../../common/utils/date.util';
 import { PrismaService } from '../prisma/prisma.service';
 import { toMissionDto } from './missions.mapper';
+
+const ACTIVE_STATUSES: MissionStatus[] = [
+  MissionStatus.Draft,
+  MissionStatus.Scheduled,
+  MissionStatus.Active,
+  MissionStatus.Paused,
+];
 
 @Injectable()
 export class MissionsService {
@@ -25,6 +33,7 @@ export class MissionsService {
         description: input.description ?? null,
         priority: input.priority,
         durationMinutes: input.durationMinutes,
+        tags: input.tags ?? [],
         deadline: input.deadline ? new Date(input.deadline) : null,
         scheduledFor: input.scheduledFor ? new Date(input.scheduledFor) : null,
       },
@@ -66,6 +75,33 @@ export class MissionsService {
     };
   }
 
+  /** Missions due (or scheduled) today, or currently active. */
+  async findToday(userId: string): Promise<Mission[]> {
+    const missions = await this.prisma.mission.findMany({
+      where: {
+        userId,
+        OR: [
+          { deadline: { gte: startOfToday(), lt: endOfToday() } },
+          { scheduledFor: { gte: startOfToday(), lt: endOfToday() } },
+          { status: MissionStatus.Active },
+        ],
+      },
+      orderBy: [{ status: 'asc' }, { deadline: 'asc' }],
+      take: 20,
+    });
+    return missions.map(toMissionDto);
+  }
+
+  /** The next few not-yet-finished missions with a future deadline. */
+  async findUpcoming(userId: string, limit = 5): Promise<Mission[]> {
+    const missions = await this.prisma.mission.findMany({
+      where: { userId, status: { in: ACTIVE_STATUSES }, deadline: { gte: new Date() } },
+      orderBy: { deadline: 'asc' },
+      take: limit,
+    });
+    return missions.map(toMissionDto);
+  }
+
   async findOne(userId: string, id: string): Promise<Mission> {
     const mission = await this.prisma.mission.findFirst({ where: { id, userId } });
     if (!mission) {
@@ -84,6 +120,8 @@ export class MissionsService {
         ...(input.description !== undefined ? { description: input.description ?? null } : {}),
         ...(input.priority !== undefined ? { priority: input.priority } : {}),
         ...(input.status !== undefined ? { status: input.status } : {}),
+        ...(input.progress !== undefined ? { progress: input.progress } : {}),
+        ...(input.tags !== undefined ? { tags: input.tags } : {}),
         ...(input.durationMinutes !== undefined ? { durationMinutes: input.durationMinutes } : {}),
         ...(input.deadline !== undefined
           ? { deadline: input.deadline ? new Date(input.deadline) : null }
@@ -109,7 +147,7 @@ export class MissionsService {
     const now = new Date();
     const data: Prisma.MissionUpdateInput = {
       activate: { status: MissionStatus.Active, startedAt: now },
-      complete: { status: MissionStatus.Completed, completedAt: now },
+      complete: { status: MissionStatus.Completed, completedAt: now, progress: 100 },
       abandon: { status: MissionStatus.Abandoned },
     }[transition];
 

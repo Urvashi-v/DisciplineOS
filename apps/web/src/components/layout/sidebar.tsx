@@ -1,4 +1,4 @@
-import { Target } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import Link from 'next/link';
 
 import { ROUTES } from '@/config/routes';
@@ -8,17 +8,34 @@ import { SidebarNav } from './sidebar-nav';
 
 export function Sidebar() {
   return (
-    <aside className="bg-card hidden w-64 shrink-0 flex-col border-r lg:flex">
-      <div className="flex h-16 items-center border-b px-6">
-        <Link href={ROUTES.dashboard} className="flex items-center gap-2 font-semibold">
-          <span className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
-            <Target className="size-5" />
-          </span>
-          <span className="text-base tracking-tight">{siteConfig.name}</span>
+    <aside className="border-border bg-sidebar fixed left-0 top-0 z-30 flex h-full w-[220px] flex-col border-r">
+      {/* Logo */}
+      <div className="border-border flex items-center gap-3 border-b px-5 py-5">
+        <span className="bg-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+          <Zap className="fill-background text-background size-3.5" />
+        </span>
+        <Link
+          href={ROUTES.dashboard}
+          className="text-foreground text-sm font-semibold tracking-tight"
+        >
+          {siteConfig.name}
         </Link>
       </div>
-      <div className="flex-1 overflow-y-auto p-4">
-        <SidebarNav />
+
+      <SidebarNav />
+
+      {/* Upgrade nudge */}
+      <div className="border-border bg-surface mx-3 mb-4 rounded-xl border p-3">
+        <p className="text-foreground mb-0.5 text-xs font-medium">Pro Plan</p>
+        <p className="text-muted-foreground text-xs leading-relaxed">
+          AI coaching &amp; advanced analytics
+        </p>
+        <button
+          type="button"
+          className="bg-foreground text-background mt-2.5 w-full rounded-lg px-3 py-1.5 text-xs font-medium transition-opacity hover:opacity-80"
+        >
+          Upgrade
+        </button>
       </div>
     </aside>
   );

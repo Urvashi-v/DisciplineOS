@@ -13,6 +13,8 @@ export interface Mission extends Timestamps {
   priority: Priority;
   status: MissionStatus;
   durationMinutes: number;
+  progress: number;
+  tags: string[];
   deadline: IsoDateString | null;
   scheduledFor: IsoDateString | null;
   startedAt: IsoDateString | null;

@@ -4,6 +4,7 @@
  * Framework-agnostic React primitives built on Tailwind + `cva` variants. The
  * Next.js app consumes this package source directly via `transpilePackages`.
  */
+export { Avatar, type AvatarProps } from './components/avatar';
 export { Badge, type BadgeProps, badgeVariants } from './components/badge';
 export { Button, type ButtonProps, buttonVariants } from './components/button';
 export {
@@ -39,6 +40,7 @@ export {
 } from './components/form';
 export { Input } from './components/input';
 export { Label } from './components/label';
+export { Progress, type ProgressProps } from './components/progress';
 export {
   Select,
   SelectContent,

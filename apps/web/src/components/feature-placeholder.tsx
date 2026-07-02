@@ -14,7 +14,7 @@ interface FeaturePlaceholderProps {
  */
 export function FeaturePlaceholder({ title, description }: FeaturePlaceholderProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-6 py-6 lg:px-8">
       <PageHeader title={title} description={description} />
       <EmptyState
         icon={Sparkles}

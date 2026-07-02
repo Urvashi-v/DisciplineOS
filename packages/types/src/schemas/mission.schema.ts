@@ -32,12 +32,14 @@ export const createMissionSchema = z.object({
     .int('Duration must be a whole number of minutes')
     .min(MISSION_DURATION_MIN, 'Minimum duration is 5 minutes')
     .max(MISSION_DURATION_MAX, 'Maximum duration is 24 hours'),
+  tags: z.array(z.string().trim().min(1).max(24)).max(6).optional(),
   deadline: optionalIsoDateTime,
   scheduledFor: optionalIsoDateTime,
 });
 
 export const updateMissionSchema = createMissionSchema.partial().extend({
   status: z.nativeEnum(MissionStatus).optional(),
+  progress: z.coerce.number().int().min(0).max(100).optional(),
 });
 
 export const missionFilterSchema = z.object({

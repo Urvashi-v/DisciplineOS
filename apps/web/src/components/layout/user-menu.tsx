@@ -1,19 +1,27 @@
+'use client';
+
+import { Avatar } from '@disciplineos/ui';
 import Link from 'next/link';
 
 import { ROUTES } from '@/config/routes';
-
-// Placeholder identity until the auth feature lands. Rendered as a link to the
-// profile so the shell is navigable end-to-end today.
-const DEMO_INITIALS = 'DF';
+import { getInitials, useCurrentUser } from '@/features/user';
 
 export function UserMenu() {
+  const { data, isLoading } = useCurrentUser();
+
+  if (isLoading || !data) {
+    return (
+      <span className="border-border bg-surface ml-1 size-8 animate-pulse rounded-full border" />
+    );
+  }
+
   return (
-    <Link
-      href={ROUTES.profile}
-      aria-label="Your profile"
-      className="bg-primary/10 text-primary hover:bg-primary/20 ml-1 flex size-9 items-center justify-center rounded-full text-sm font-semibold transition-colors"
-    >
-      {DEMO_INITIALS}
+    <Link href={ROUTES.profile} aria-label="Your profile" className="ml-1">
+      <Avatar
+        fallback={getInitials(data.displayName)}
+        src={data.avatarUrl}
+        className="hover:border-foreground/20 transition-colors"
+      />
     </Link>
   );
 }

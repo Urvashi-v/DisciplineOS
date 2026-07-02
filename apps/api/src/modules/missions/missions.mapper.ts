@@ -11,6 +11,8 @@ export function toMissionDto(mission: PrismaMission): Mission {
     priority: mission.priority,
     status: mission.status,
     durationMinutes: mission.durationMinutes,
+    progress: mission.progress,
+    tags: mission.tags,
     deadline: mission.deadline?.toISOString() ?? null,
     scheduledFor: mission.scheduledFor?.toISOString() ?? null,
     startedAt: mission.startedAt?.toISOString() ?? null,

@@ -2,13 +2,13 @@ import './globals.css';
 
 import { cn } from '@disciplineos/ui';
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Geist_Mono, Inter } from 'next/font/google';
 
 import { Providers } from '@/components/providers';
 import { siteConfig } from '@/config/site';
 
 const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
-const fontMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
+const fontMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 export const metadata: Metadata = {
   title: {
@@ -20,15 +20,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
-  ],
+  themeColor: '#0d0d0d',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
         className={cn(
           fontSans.variable,

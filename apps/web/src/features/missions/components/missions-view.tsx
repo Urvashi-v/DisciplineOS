@@ -7,7 +7,7 @@ import { MissionList } from './mission-list';
 
 export function MissionsView() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-6 py-6 lg:px-8">
       <PageHeader
         title="Missions"
         description="Every mission is an active commitment — not a passive task."

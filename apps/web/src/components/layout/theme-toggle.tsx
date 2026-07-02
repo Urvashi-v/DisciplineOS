@@ -1,27 +1,19 @@
 'use client';
 
-import { Button } from '@disciplineos/ui';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { Moon } from 'lucide-react';
 
+/**
+ * Theme control. DisciplineOS ships as a dark-only experience (the approved
+ * design), so this renders the design's moon affordance without toggling.
+ */
 export function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid a hydration mismatch: theme is only known on the client.
-  useEffect(() => setMounted(true), []);
-
-  const isDark = resolvedTheme === 'dark';
-
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      aria-label="Toggle theme"
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+    <button
+      type="button"
+      aria-label="Theme"
+      className="text-muted-foreground hover:bg-accent hover:text-foreground relative flex size-8 items-center justify-center rounded-lg transition-colors"
     >
-      {mounted && isDark ? <Sun /> : <Moon />}
-    </Button>
+      <Moon className="size-4" />
+    </button>
   );
 }

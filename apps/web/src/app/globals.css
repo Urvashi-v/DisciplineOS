@@ -3,83 +3,82 @@
 @tailwind utilities;
 
 /*
- * Design tokens — concrete values for the CSS variables referenced by the
- * shared Tailwind preset (@disciplineos/config/tailwind). Editing these retints
- * the entire product; components never hardcode colours.
+ * DisciplineOS — dark-only premium theme (design source of truth).
+ *
+ * Solid tokens store OKLCH channels (`L C H`); the Tailwind preset wraps them as
+ * `oklch(var(--token) / <alpha-value>)`. Translucent tokens (border/input/ring)
+ * store a full colour and are referenced directly.
  */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    color-scheme: dark;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    /* Base surfaces */
+    --background: 0.1 0 0;
+    --foreground: 0.94 0 0;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    /* Cards / panels */
+    --card: 0.14 0 0;
+    --card-foreground: 0.94 0 0;
+    --surface: 0.17 0 0;
+    --surface-foreground: 0.94 0 0;
+    --surface-raised: 0.2 0 0;
 
-    --primary: 243 75% 59%;
-    --primary-foreground: 0 0% 100%;
+    /* Popover */
+    --popover: 0.14 0 0;
+    --popover-foreground: 0.94 0 0;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    /* Brand accent — warm platinum white */
+    --brand: 0.9 0 0;
+    --brand-foreground: 0.1 0 0;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    /* Primary = brand white */
+    --primary: 0.9 0 0;
+    --primary-foreground: 0.1 0 0;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    /* Secondary */
+    --secondary: 0.2 0 0;
+    --secondary-foreground: 0.8 0 0;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 98%;
+    /* Muted / inactive */
+    --muted: 0.18 0 0;
+    --muted-foreground: 0.5 0 0;
 
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
+    /* Accent */
+    --accent: 0.22 0 0;
+    --accent-foreground: 0.9 0 0;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 240 10% 3.9%;
+    /* Semantic */
+    --destructive: 0.6 0.2 25;
+    --destructive-foreground: 0.98 0 0;
+    --success: 0.68 0.15 155;
+    --success-foreground: 0.1 0 0;
+    --warning: 0.78 0.14 80;
+    --warning-foreground: 0.1 0 0;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 243 75% 59%;
+    /* Borders & inputs (translucent) */
+    --border: oklch(1 0 0 / 7%);
+    --input: oklch(1 0 0 / 10%);
+    --ring: oklch(0.9 0 0 / 25%);
 
-    --radius: 0.6rem;
-  }
+    --radius: 0.75rem;
 
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Charts — monochromatic slate */
+    --chart-1: 0.88 0 0;
+    --chart-2: 0.65 0 0;
+    --chart-3: 0.45 0 0;
+    --chart-4: 0.32 0 0;
+    --chart-5: 0.22 0 0;
 
-    --card: 240 10% 5.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 243 75% 66%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 98%;
-
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 240 10% 3.9%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 243 75% 66%;
+    /* Sidebar */
+    --sidebar: 0.12 0 0;
+    --sidebar-foreground: 0.7 0 0;
+    --sidebar-primary: 0.9 0 0;
+    --sidebar-primary-foreground: 0.1 0 0;
+    --sidebar-accent: 0.18 0 0;
+    --sidebar-accent-foreground: 0.94 0 0;
+    --sidebar-border: oklch(1 0 0 / 6%);
+    --sidebar-ring: oklch(0.9 0 0 / 20%);
   }
 }
 
@@ -96,4 +95,20 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+}
+
+/* Custom scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(1 0 0 / 12%);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(1 0 0 / 20%);
 }

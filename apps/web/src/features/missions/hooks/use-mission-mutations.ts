@@ -14,7 +14,7 @@ export function useCreateMission() {
   return useMutation({
     mutationFn: (input: CreateMissionInput) => missionService.create(input),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: missionKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: missionKeys.all });
       toast.success('Mission created');
     },
     onError: (error) => toast.error(getErrorMessage(error)),
@@ -42,7 +42,7 @@ export function useDeleteMission() {
   return useMutation({
     mutationFn: (id: string) => missionService.remove(id),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: missionKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: missionKeys.all });
       toast.success('Mission deleted');
     },
     onError: (error) => toast.error(getErrorMessage(error)),

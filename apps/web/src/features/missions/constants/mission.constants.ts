@@ -8,6 +8,8 @@ export const missionKeys = {
   all: ['missions'] as const,
   lists: () => [...missionKeys.all, 'list'] as const,
   list: (filter?: Partial<MissionFilter>) => [...missionKeys.lists(), filter ?? {}] as const,
+  today: () => [...missionKeys.all, 'today'] as const,
+  upcoming: () => [...missionKeys.all, 'upcoming'] as const,
   details: () => [...missionKeys.all, 'detail'] as const,
   detail: (id: string) => [...missionKeys.details(), id] as const,
 };

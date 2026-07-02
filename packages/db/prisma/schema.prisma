@@ -80,6 +80,56 @@ enum MissionStatus {
   EXPIRED
 }
 
+enum FocusSessionStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ABANDONED
+}
+
+enum CommitmentType {
+  REFUNDABLE_DEPOSIT
+  SOCIAL_ACCOUNTABILITY
+  TIME_COMMITMENT
+  PERSONAL_PROMISE
+  STREAK_RISK
+  CHARACTER_PROGRESS
+  REWARD_LOCK
+}
+
+enum CommitmentStatus {
+  PENDING
+  ACTIVE
+  FULFILLED
+  FORFEITED
+  RELEASED
+}
+
+enum StreakType {
+  DAILY_FOCUS
+  MISSION_COMPLETION
+  CHALLENGE
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
+
+enum ChallengeVisibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum ChallengeStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
 // -----------------------------------------------------------------------------
 // Identity
 // -----------------------------------------------------------------------------
@@ -94,12 +144,18 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  profile       Profile?
-  accounts      Account[]
-  sessions      Session[]
-  subscription  Subscription?
-  notifications Notification[]
-  missions      Mission[]
+  profile         Profile?
+  accounts        Account[]
+  sessions        Session[]
+  subscription    Subscription?
+  notifications   Notification[]
+  missions        Mission[]
+  focusSessions   FocusSession[]
+  commitments     Commitment[]
+  streaks         Streak[]
+  friendships     Friendship[]  @relation("UserFriendships")
+  friendOf        Friendship[]  @relation("FriendFriendships")
+  challengeEntries ChallengeParticipant[]
 
   @@index([planTier])
   @@map("users")
@@ -237,6 +293,8 @@ model Mission {
   priority        Priority      @default(MEDIUM)
   status          MissionStatus @default(DRAFT)
   durationMinutes Int
+  progress        Int           @default(0)
+  tags            String[]      @default([])
   deadline        DateTime?
   scheduledFor    DateTime?
   startedAt       DateTime?
@@ -244,9 +302,123 @@ model Mission {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  focusSessions FocusSession[]
+  commitments   Commitment[]
 
   @@index([userId, status])
   @@index([userId, deadline])
   @@map("missions")
+}
+
+// -----------------------------------------------------------------------------
+// Focus, commitments, streaks
+// -----------------------------------------------------------------------------
+
+/// A focus/deep-work block. Source of truth for focus hours and the heatmap.
+model FocusSession {
+  id            String             @id @default(cuid())
+  userId        String
+  missionId     String?
+  status        FocusSessionStatus @default(ACTIVE)
+  plannedMinutes Int               @default(25)
+  actualSeconds Int                @default(0)
+  interruptions Int                @default(0)
+  startedAt     DateTime           @default(now())
+  endedAt       DateTime?
+  createdAt     DateTime           @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission Mission? @relation(fields: [missionId], references: [id], onDelete: SetNull)
+
+  @@index([userId, startedAt])
+  @@map("focus_sessions")
+}
+
+/// A Commitment Vault contract — a stake attached to a goal/mission.
+model Commitment {
+  id              String           @id @default(cuid())
+  userId          String
+  missionId       String?
+  title           String
+  type            CommitmentType   @default(REFUNDABLE_DEPOSIT)
+  status          CommitmentStatus @default(ACTIVE)
+  stakeAmountCents Int?
+  reward          String?
+  completion      Int              @default(0)
+  deadline        DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission Mission? @relation(fields: [missionId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@map("commitments")
+}
+
+model Streak {
+  id             String     @id @default(cuid())
+  userId         String
+  type           StreakType @default(DAILY_FOCUS)
+  current        Int        @default(0)
+  longest        Int        @default(0)
+  lastActiveDate DateTime?
+  updatedAt      DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+  @@map("streaks")
+}
+
+// -----------------------------------------------------------------------------
+// Social
+// -----------------------------------------------------------------------------
+
+model Friendship {
+  id        String           @id @default(cuid())
+  userId    String
+  friendId  String
+  status    FriendshipStatus @default(ACCEPTED)
+  createdAt DateTime         @default(now())
+
+  user   User @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendFriendships", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@index([userId])
+  @@map("friendships")
+}
+
+model Challenge {
+  id           String              @id @default(cuid())
+  title        String
+  description  String?
+  visibility   ChallengeVisibility @default(PUBLIC)
+  status       ChallengeStatus     @default(ACTIVE)
+  totalDays    Int                 @default(7)
+  currentDay   Int                 @default(1)
+  startsAt     DateTime            @default(now())
+  endsAt       DateTime?
+  createdAt    DateTime            @default(now())
+
+  participants ChallengeParticipant[]
+
+  @@map("challenges")
+}
+
+model ChallengeParticipant {
+  id          String   @id @default(cuid())
+  challengeId String
+  userId      String
+  rank        Int?
+  progress    Int      @default(0)
+  joinedAt    DateTime @default(now())
+
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, userId])
+  @@map("challenge_participants")
 }
